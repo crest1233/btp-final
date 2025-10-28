@@ -1,0 +1,356 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CREATOR
+  BRAND
+  ADMIN
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  creator Creator?
+  brand   Brand?
+
+  @@map("users")
+}
+
+model Creator {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  username    String  @unique
+  displayName String
+  bio         String?
+  avatar      String?
+  
+  // Social Media Stats
+  instagramHandle    String?
+  instagramFollowers Int?    @default(0)
+  tiktokHandle       String?
+  tiktokFollowers    Int?    @default(0)
+  youtubeHandle      String?
+  youtubeFollowers   Int?    @default(0)
+  
+  // Engagement & Pricing
+  avgEngagementRate Float?  @default(0)
+  basePrice         Float?  @default(0)
+  
+  // Demographics
+  age       Int?
+  location  String?
+  gender    String?
+  
+  // Categories/Niches
+  categories String[] // Array of category strings
+  
+  // Verification & Status
+  isVerified Boolean @default(false)
+  isActive   Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications CampaignApplication[]
+  shortlists   Shortlist[]
+  events       Event[]
+  deals        Deal[]
+  invoices     Invoice[]
+  ideas        Idea[]
+  analytics    AnalyticsSnapshot[]
+  mediaKit     MediaKit?
+
+  @@map("creators")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  creatorId   String
+  title       String
+  description String?
+  startAt     DateTime
+  endAt       DateTime?
+  location    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("events")
+}
+
+model Brand {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  companyName String
+  description String?
+  logo        String?
+  website     String?
+  industry    String?
+  
+  // Contact Info
+  contactEmail String?
+  contactPhone String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaigns Campaign[]
+  shortlists Shortlist[]
+
+  @@map("brands")
+}
+
+model Campaign {
+  id          String         @id @default(cuid())
+  brandId     String
+  title       String
+  description String
+  
+  // Campaign Details
+  budget         Float
+  startDate      DateTime
+  endDate        DateTime
+  deliverables   String[] // Array of deliverable descriptions
+  requirements   String[] // Array of requirements
+  
+  // Targeting
+  targetAudience    String?
+  preferredCategories String[] // Categories to target
+  minFollowers      Int?
+  maxFollowers      Int?
+  
+  // Media & Assets
+  briefDocument String? // URL to campaign brief
+  assets        String[] // URLs to campaign assets
+  
+  status    CampaignStatus @default(DRAFT)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  // Relations
+  brand        Brand                 @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  applications CampaignApplication[]
+
+  @@map("campaigns")
+}
+
+model CampaignApplication {
+  id         String            @id @default(cuid())
+  campaignId String
+  creatorId  String
+  
+  // Application Details
+  proposedPrice Float?
+  message       String?
+  portfolio     String[] // URLs to portfolio items
+  
+  status    ApplicationStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relations
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  creator  Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, creatorId])
+  @@map("campaign_applications")
+}
+
+model Shortlist {
+  id        String   @id @default(cuid())
+  creatorId String
+  brandId   String
+  notes     String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  creator Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brand   Brand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([creatorId, brandId])
+  @@map("shortlists")
+}
+
+enum DealStatus {
+  NEW
+  NEGOTIATING
+  ACTIVE
+  COMPLETED
+  LOST
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+}
+
+enum IdeaStatus {
+  DRAFT
+  PLANNED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Platform {
+  INSTAGRAM
+  TIKTOK
+  YOUTUBE
+}
+
+model Deal {
+  id        String     @id @default(cuid())
+  creatorId String
+  title     String
+  brand     String?
+  value     Float?
+  status    DealStatus @default(NEW)
+  notes     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  creator   Creator    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  invoices  Invoice[]
+
+  @@map("deals")
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  creatorId     String
+  dealId        String?
+  invoiceNumber String        @unique
+  issueDate     DateTime
+  dueDate       DateTime?
+  status        InvoiceStatus @default(DRAFT)
+  currency      String?
+  subtotal      Float?
+  tax           Float?
+  total         Float?
+  notes         String?
+  // Add client metadata for formal invoices
+  clientName     String?
+  clientEmail    String?
+  clientCompany  String?
+  clientAddress  String?
+  clientCity     String?
+  clientState    String?
+  clientZip      String?
+  clientCountry  String?
+  clientTaxId    String?
+  paymentTerms   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  creator       Creator       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  deal          Deal?         @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  items         InvoiceItem[]
+
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Float    @default(0)
+  total       Float    @default(0)
+
+  // Relations
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_items")
+}
+
+model Idea {
+  id          String     @id @default(cuid())
+  creatorId   String
+  title       String
+  description String?
+  tags        String[]
+  status      IdeaStatus @default(DRAFT)
+  priority    Priority   @default(MEDIUM)
+  attachments String[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  creator     Creator    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("ideas")
+}
+
+model AnalyticsSnapshot {
+  id             String   @id @default(cuid())
+  creatorId      String
+  platform       Platform
+  date           DateTime @default(now())
+  followers      Int?
+  engagementRate Float?
+  reach          Int?
+  impressions    Int?
+  createdAt      DateTime @default(now())
+
+  // Relations
+  creator        Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("analytics_snapshots")
+}
+
+model MediaKit {
+  id        String  @id @default(cuid())
+  creatorId String  @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  // Relations
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("media_kits")
+}
