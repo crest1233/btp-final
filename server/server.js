@@ -17,8 +17,21 @@ const PORT = process.env.PORT || 4000;
 
 // Security middleware
 app.use(helmet());
+
+// Allow multiple origins via env: ALLOWED_ORIGINS (comma-separated) or FRONTEND_URL
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -86,4 +99,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🔐 Allowed origins: ${allowedOrigins.join(', ')}`);
 });
