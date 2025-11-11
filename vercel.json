@@ -4,5 +4,8 @@
   "framework": "vite",
   "env": {
     "VITE_API_BASE_URL": "https://inverso-api.onrender.com"
-  }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://inverso-api.onrender.com/api/$1" }
+  ]
 }
