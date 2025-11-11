@@ -1,6 +1,9 @@
+/// <reference types="vite/client" />
+
 let authToken: string | null = null;
 
-const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL || '';
+// Use direct import.meta.env access so Vite injects at build time
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 function resolveUrl(path: string): string {
   // If path is already absolute (http/https), return as-is
