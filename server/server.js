@@ -35,19 +35,25 @@ app.use(cors({
   credentials: true
 }));
 
-// Rate limiting
+// Rate limiting (skip health check)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 1000 requests per windowMs (increased for development)
-  message: { error: 'Too many requests, please try again later.' }, // Return JSON instead of plain text
+  max: 1000,
+  message: { error: 'Too many requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path === '/health' // skip /api/health
 });
 app.use('/api/', limiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Root OK for default health checks
+app.get('/', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -95,7 +101,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
