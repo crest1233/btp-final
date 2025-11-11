@@ -27,6 +27,7 @@ const allowedOriginsRaw = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_U
 // Normalize entries: strip quotes/backticks and trailing slashes
 const normalizeEntry = (s) => s.replace(/^['"`]+|['"`]+$/g, '').replace(/\/+$/, '');
 const allowedOrigins = allowedOriginsRaw.map(normalizeEntry);
+const allowAnyOrigin = allowedOrigins.includes('*');
 
 // Convert wildcard patterns like https://*.netlify.app to RegExp
 const toOriginRegex = (pattern) => {
@@ -41,16 +42,19 @@ const wildcardMatchers = allowedOriginsRaw
 
 app.use(cors({
   origin: (origin, callback) => {
+    if (allowAnyOrigin) return callback(null, true);
     const o = origin ? normalizeEntry(origin) : origin;
     const exactMatch = !o || allowedOrigins.includes(o);
     const wildcardMatch = o && wildcardMatchers.some((re) => re.test(o));
     if (exactMatch || wildcardMatch) {
       callback(null, true);
     } else {
+      console.warn('CORS blocked origin:', origin, 'allowed:', allowedOrigins.join(', '));
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 // Rate limiting (skip health check)
