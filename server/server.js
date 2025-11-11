@@ -79,13 +79,22 @@ app.get('/', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV 
-  });
+// Health check (supports /api/health and /api/health/; GET + HEAD)
+const healthPayload = () => ({
+  status: 'OK',
+  timestamp: new Date().toISOString(),
+  environment: process.env.NODE_ENV
+});
+app.get(/^\/api\/health\/?$/, (req, res) => {
+  res.json(healthPayload());
+});
+app.head(/^\/api\/health\/?$/, (req, res) => {
+  res.status(200).end();
+});
+
+// Optional secondary health path
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
 // API Routes
@@ -99,6 +108,7 @@ app.use('/api/uploads', uploadRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
+  console.warn('404 route not found:', req.method, req.originalUrl);
   res.status(404).json({ error: 'Route not found' });
 });
 
