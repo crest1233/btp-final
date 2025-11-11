@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
+import { get } from '../../system/api';
 
 export default function BackendStatus() {
   const [status, setStatus] = useState('checking');
-  const [lastChecked, setLastChecked] = useState(null);
+  const [lastChecked, setLastChecked] = useState<string | null>(null);
 
   async function checkHealth() {
     try {
-      const res = await fetch('/api/health');
-      if (!res.ok) throw new Error('Bad status');
-      const data = await res.json();
+      const data = await get('/api/health');
       setStatus('online');
-      setLastChecked(data?.timestamp || new Date().toISOString());
+      setLastChecked((data as any)?.timestamp || new Date().toISOString());
     } catch (e) {
       setStatus('offline');
       setLastChecked(new Date().toISOString());
