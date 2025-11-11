@@ -60,7 +60,7 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.path === '/health' // skip /api/health
+  skip: (req) => req.originalUrl && req.originalUrl.startsWith('/api/health')
 });
 app.use('/api/', limiter);
 

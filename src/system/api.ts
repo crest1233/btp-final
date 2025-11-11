@@ -29,7 +29,6 @@ export function getToken(): string | null {
 export async function apiFetch<T = any>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...(options.headers as Record<string, string> || {}),
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -49,11 +48,11 @@ export async function get<T = any>(path: string): Promise<T> {
 }
 
 export async function post<T = any>(path: string, body: any): Promise<T> {
-  return apiFetch<T>(path, { method: 'POST', body: JSON.stringify(body) });
+  return apiFetch<T>(path, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
 }
 
 export async function put<T = any>(path: string, body: any): Promise<T> {
-  return apiFetch<T>(path, { method: 'PUT', body: JSON.stringify(body) });
+  return apiFetch<T>(path, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
 }
 
 export async function del<T = any>(path: string): Promise<T> {
