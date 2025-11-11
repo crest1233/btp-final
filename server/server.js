@@ -31,13 +31,15 @@ const allowAnyOrigin = allowedOrigins.includes('*');
 
 // Convert wildcard patterns like https://*.netlify.app to RegExp
 const toOriginRegex = (pattern) => {
-  const p = normalizeEntry(pattern)
-    .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // escape regex chars
-    .replace(/\\\*/g, '.*'); // * -> .*
+  const n = normalizeEntry(pattern);
+  if (n === '*') return /.*/; // match any origin safely
+  const p = n
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // escape regex chars (not *)
+    .replace(/\*/g, '.*'); // unescaped * -> .*
   return new RegExp(`^${p}$`);
 };
-const wildcardMatchers = allowedOriginsRaw
-  .filter((o) => o.includes('*'))
+const wildcardMatchers = allowedOrigins
+  .filter((o) => o.includes('*') && o !== '*')
   .map(toOriginRegex);
 
 app.use(cors({
