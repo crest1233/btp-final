@@ -19,14 +19,32 @@ const PORT = process.env.PORT || 4000;
 app.use(helmet());
 
 // Allow multiple origins via env: ALLOWED_ORIGINS (comma-separated) or FRONTEND_URL
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000')
+const allowedOriginsRaw = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
 
+// Normalize entries: strip quotes/backticks and trailing slashes
+const normalizeEntry = (s) => s.replace(/^['"`]+|['"`]+$/g, '').replace(/\/+$/, '');
+const allowedOrigins = allowedOriginsRaw.map(normalizeEntry);
+
+// Convert wildcard patterns like https://*.netlify.app to RegExp
+const toOriginRegex = (pattern) => {
+  const p = normalizeEntry(pattern)
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // escape regex chars
+    .replace(/\\\*/g, '.*'); // * -> .*
+  return new RegExp(`^${p}$`);
+};
+const wildcardMatchers = allowedOriginsRaw
+  .filter((o) => o.includes('*'))
+  .map(toOriginRegex);
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    const o = origin ? normalizeEntry(origin) : origin;
+    const exactMatch = !o || allowedOrigins.includes(o);
+    const wildcardMatch = o && wildcardMatchers.some((re) => re.test(o));
+    if (exactMatch || wildcardMatch) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
