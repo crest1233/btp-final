@@ -2,8 +2,8 @@
 
 let authToken: string | null = null;
 
-// Use direct import.meta.env access so Vite injects at build time
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+// Ensure env injection; fallback to Render in production if missing
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://inverso-api.onrender.com' : ''));
 
 function resolveUrl(path: string): string {
   // If path is already absolute (http/https), return as-is
