@@ -43,7 +43,9 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
   const handleLogout = () => {
     navigate('landing', { userRole: null, user: null });
   };
+
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
@@ -75,8 +77,23 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
               </div>
             )}
 
+            {/* Mobile hamburger toggle */}
             {userRole && (
-              <div className="flex items-center gap-2">
+              <div className="md:hidden flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileOpen(v => !v)}
+                  className="p-0 w-8 h-8 min-w-0"
+                  aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </div>
+            )}
+
+            {userRole && (
+              <div className="hidden md:flex items-center gap-2">
                 {userRole === 'brand' && (
                   <Button onClick={() => navigate('createCampaign')} className="gap-2 hidden md:inline-flex">
                     <PlusCircle className="w-4 h-4" />
@@ -94,7 +111,7 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
       </header>
 
       {/* Mobile Navigation */}
-      {userRole && (
+      {userRole && mobileOpen && (
         <div className="md:hidden bg-white border-b border-gray-200">
           {/* Mobile Header Actions for Brand Users */}
           {userRole === 'brand' && (
@@ -123,7 +140,7 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
                   key={item.screen}
                   variant={isActive ? 'secondary' : 'ghost'}
                   size="sm"
-                  onClick={() => navigate(item.screen)}
+                  onClick={() => { setMobileOpen(false); navigate(item.screen); }}
                   className={`gap-2 whitespace-nowrap flex-shrink-0 ${
                     isActive 
                       ? 'bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border-purple-200' 
@@ -140,7 +157,7 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={handleLogout} 
+              onClick={() => { setMobileOpen(false); handleLogout(); }} 
               className="gap-2 whitespace-nowrap flex-shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
             >
               <LogOut className="w-4 h-4" />
