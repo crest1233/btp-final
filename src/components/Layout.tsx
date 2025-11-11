@@ -167,6 +167,34 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
         </div>
       )}
 
+      {/* Desktop Navigation Tabs */}
+      {userRole && (
+        <div className="hidden md:block bg-white border-b border-gray-200">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex gap-2 flex-wrap">
+            {getNavItems().map((item) => {
+              const Icon = item.icon;
+              const isActive = currentScreen === item.screen;
+              return (
+                <Button
+                  key={item.screen}
+                  variant={isActive ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => navigate(item.screen)}
+                  className={`gap-2 ${
+                    isActive
+                      ? 'bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border-purple-200'
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </nav>
+        </div>
+      )}
+
       {/* Content */}
       {userRole ? (
         <>
@@ -174,7 +202,7 @@ export default function Layout({ children, navigate, userRole, currentScreen }: 
           <div className="md:hidden min-h-[calc(100vh-4rem)]">{children}</div>
           {/* Desktop sidebar + content */}
           <div className="hidden md:flex min-h-[calc(100vh-4rem)]">
-            <aside className={`bg-white border-r border-gray-200 ${sidebarOpen ? 'w-56' : 'w-16'} transition-all`}>
+            <aside className={`bg-white border-r border-gray-200 ${sidebarOpen ? 'w-56' : 'w-16'} transition-all h-[calc(100vh-4rem)] overflow-y-auto`}>
               <div className="p-2">
                 {getNavItems().map((item) => {
                   const Icon = item.icon;
