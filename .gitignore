@@ -1,0 +1,25 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+build/
+dev-dist/
+dist/
+
+# OS
+.DS_Store
+
+# Env files
+.env
+server/.env
+
+# Local data
+server/data/
+
+# Misc
+coverage/
+.vercel/
+.netlify/

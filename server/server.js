@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
+const { PrismaClient } = require('@prisma/client');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -14,6 +15,7 @@ const uploadRoutes = require('./routes/uploads');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const prisma = new PrismaClient();
 
 // Security middleware
 app.use(helmet());
@@ -90,6 +92,18 @@ app.get(/^\/api\/health\/?$/, (req, res) => {
 });
 app.head(/^\/api\/health\/?$/, (req, res) => {
   res.status(200).end();
+});
+
+// Database connectivity health check
+app.get(/^\/api\/health\/db\/?$/, async (req, res) => {
+  try {
+    // Lightweight connectivity test
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'OK', database: 'connected' });
+  } catch (error) {
+    console.error('DB health check failed:', error);
+    res.status(500).json({ status: 'ERROR', database: 'unreachable', error: error.message });
+  }
 });
 
 // Optional secondary health path
