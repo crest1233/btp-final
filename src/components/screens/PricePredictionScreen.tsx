@@ -43,14 +43,45 @@ export default function PricePredictionScreen({ navigate }: PricePredictionScree
   }, []);
 
   const calculatePrice = () => {
-    const base = followers[0] * (engagement[0] / 100) * 0.05;
-    const platformMultiplier = platform === 'instagram' ? 1 : platform === 'tiktok' ? 1.2 : 1.1;
-    const nicheMultiplier = niche === 'tech' ? 1.3 : niche === 'beauty' ? 1.2 : 1.0;
-    const MULTIPLIER = 7; // increase predicted pricing as requested
-    const price = Math.round(base * platformMultiplier * nicheMultiplier * MULTIPLIER);
-    setPredictedPrice(price as any);
-    setPriceRange({ low: Math.round(price * 0.8), recommended: price, high: Math.round(price * 1.4) } as any);
-    toast.success('Pricing calculated');
+    // Market-based INR pricing heuristic for India
+    const f = followers[0];
+    const e = engagement[0];
+
+    // Base rate per 1k followers (INR), tiered by size
+    const perK =
+      f < 10000 ? 250 :
+      f < 100000 ? 500 :
+      f < 500000 ? 900 :
+      1500;
+
+    // Engagement factor bands (approximate, non-linear)
+    let engagementFactor = 1.0;
+    if (e < 2) engagementFactor = 0.85;
+    else if (e < 4) engagementFactor = 1.0;
+    else if (e < 7) engagementFactor = 1.15;
+    else if (e < 10) engagementFactor = 1.3;
+    else engagementFactor = 1.5;
+
+    // Platform multiplier
+    const platformMultiplier = platform === 'instagram' ? 1.0 : platform === 'tiktok' ? 1.1 : 1.3; // youtube higher for production value
+
+    // Niche multiplier
+    const nicheMultipliers: Record<string, number> = {
+      fashion: 1.05,
+      beauty: 1.1,
+      tech: 1.25,
+      fitness: 1.05,
+      food: 1.0,
+      travel: 1.0,
+      lifestyle: 1.0,
+      gaming: 1.15,
+    };
+    const nicheMultiplier = nicheMultipliers[niche] ?? 1.0;
+
+    const recommended = Math.round((f / 1000) * perK * engagementFactor * platformMultiplier * nicheMultiplier);
+    setPredictedPrice(recommended as any);
+    setPriceRange({ low: Math.round(recommended * 0.8), recommended, high: Math.round(recommended * 1.4) } as any);
+    toast.success('Pricing estimated (INR) based on current market');
   };
 
   return (

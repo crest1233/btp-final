@@ -206,19 +206,19 @@ export default function LandingScreen({ navigate }: LandingScreenProps) {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                name: 'Sarah Johnson',
-                role: 'Content Creator',
-                text: 'Inverso helped me land collaborations with brands I always dreamed of working with.',
+                name: 'Aisha Sharma',
+                role: 'Lifestyle Creator',
+                text: 'Inverso helped me collaborate with homegrown brands and startups that truly fit my audience.',
               },
               {
-                name: 'Mike Chen',
-                role: 'Marketing Director',
-                text: 'Finding the right creators has never been easier. The platform saves us hours of research.',
+                name: 'Rohan Mehta',
+                role: 'Marketing Manager',
+                text: 'Finding the right creators across Tier-1 and Tier-2 cities became effortless. Huge time saver for our team.',
               },
               {
-                name: 'Emma Davis',
-                role: 'Lifestyle Influencer',
-                text: 'The pricing tool ensures I\'m always compensated fairly for my work.',
+                name: 'Priya Nair',
+                role: 'Beauty Influencer',
+                text: 'The pricing tool keeps negotiations fair and aligned with current market rates in India.',
               },
             ].map((testimonial, i) => (
               <Card key={i}>
