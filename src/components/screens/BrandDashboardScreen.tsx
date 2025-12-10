@@ -25,7 +25,7 @@ const mockCreators = [
     followers: '125K',
     engagement: '5.2%',
     rating: 4.8,
-    rate: '$800/post',
+  rate: '₹800/post',
   },
   {
     id: '2',
@@ -34,7 +34,7 @@ const mockCreators = [
     followers: '89K',
     engagement: '6.1%',
     rating: 4.9,
-    rate: '$650/post',
+  rate: '₹650/post',
   },
   {
     id: '3',
@@ -43,7 +43,7 @@ const mockCreators = [
     followers: '210K',
     engagement: '4.8%',
     rating: 4.7,
-    rate: '$1,200/post',
+  rate: '₹1,200/post',
   },
   {
     id: '4',
@@ -52,7 +52,7 @@ const mockCreators = [
     followers: '156K',
     engagement: '7.3%',
     rating: 4.9,
-    rate: '$900/post',
+  rate: '₹900/post',
   },
 ];
 

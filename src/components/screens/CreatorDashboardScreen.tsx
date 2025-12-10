@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Skeleton } from '../ui/skeleton';
-import { Users, TrendingUp, Briefcase, DollarSign, Calendar, Bell, CheckCircle, XCircle, MessageSquare } from 'lucide-react';
+import { Users, TrendingUp, Briefcase, IndianRupee, Calendar, Bell, CheckCircle, XCircle, MessageSquare } from 'lucide-react';
 import { AppState } from '../../App';
 import { get, put, post } from '../../system/api'
 import { toast } from 'sonner'
@@ -174,7 +174,7 @@ export default function CreatorDashboardScreen({ navigate, appState }: CreatorDa
           <MetricCard
             title="Total Applications"
             value={loading ? '…' : String(totalApplications)}
-            icon={DollarSign}
+ icon={IndianRupee}
             trend={undefined}
             iconColor="bg-yellow-500"
           />
@@ -310,7 +310,7 @@ export default function CreatorDashboardScreen({ navigate, appState }: CreatorDa
                   {recentActivity.map((activity, i) => (
                     <div key={i} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0 flex items-start gap-3">
                       <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                        {activity.type === 'payment' && <DollarSign className="w-4 h-4 text-green-600" />}
+ {activity.type === 'payment' && <IndianRupee className="w-4 h-4 text-green-600" />}
                         {activity.type === 'message' && <Users className="w-4 h-4 text-blue-600" />}
                         {activity.type === 'campaign' && <Briefcase className="w-4 h-4 text-purple-600" />}
                         {activity.type === 'invite' && <Calendar className="w-4 h-4 text-yellow-600" />}
@@ -505,7 +505,7 @@ export default function CreatorDashboardScreen({ navigate, appState }: CreatorDa
                 className="h-auto flex-col gap-2 py-6"
                 onClick={() => navigate('pricePrediction')}
               >
-                <DollarSign className="w-6 h-6" />
+ <IndianRupee className="w-6 h-6" />
                 <span>Pricing Tool</span>
               </Button>
               <Button 

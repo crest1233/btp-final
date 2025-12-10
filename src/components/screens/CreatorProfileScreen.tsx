@@ -213,7 +213,7 @@ export default function CreatorProfileScreen({ navigate, appState }: CreatorProf
                   <p className="text-sm text-gray-600 mt-1">Engagement</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-gray-900">${formData.baseRate}/post</p>
+                <p className="text-gray-900">₹{formData.baseRate}/post</p>
                   <p className="text-sm text-gray-600 mt-1">Base Rate</p>
                 </div>
               </div>
@@ -442,7 +442,7 @@ export default function CreatorProfileScreen({ navigate, appState }: CreatorProf
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="baseRate">Base Rate per Post ($)</Label>
+                <Label htmlFor="baseRate">Base Rate per Post (₹)</Label>
                     <Input
                       id="baseRate"
                       type="number"

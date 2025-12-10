@@ -119,7 +119,7 @@ export default function CampaignDetailsScreen({ appState, navigate }: CampaignDe
             <CardTitle>Budget</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl text-gray-900">${(campaign as any).budget ?? 0}</p>
+                  <p className="text-xl text-gray-900">₹{(campaign as any).budget ?? 0}</p>
           </CardContent>
         </Card>
         <Card>

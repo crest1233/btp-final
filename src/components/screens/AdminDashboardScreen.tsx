@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Users, Briefcase, TrendingUp, DollarSign, Eye } from 'lucide-react';
+import { Users, Briefcase, TrendingUp, IndianRupee, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AdminDashboardScreenProps {
@@ -17,7 +17,7 @@ const platformStats = {
   brands: 391,
   campaigns: 423,
   activeCampaigns: 156,
-  totalRevenue: '$487,320',
+  totalRevenue: '₹487,320',
   monthlyGrowth: '+12.5%',
 };
 
@@ -29,9 +29,9 @@ const recentUsers = [
 ];
 
 const recentCampaigns = [
-  { id: '1', name: 'Summer Collection Launch', brand: 'StyleCo', creators: 8, status: 'active', budget: '$12,000' },
-  { id: '2', name: 'Product Review Series', brand: 'TechBrand', creators: 5, status: 'active', budget: '$8,500' },
-  { id: '3', name: 'Fitness Challenge', brand: 'FitLife', creators: 12, status: 'completed', budget: '$15,000' },
+  { id: '1', name: 'Summer Collection Launch', brand: 'StyleCo', creators: 8, status: 'active', budget: '₹12,000' },
+  { id: '2', name: 'Product Review Series', brand: 'TechBrand', creators: 5, status: 'active', budget: '₹8,500' },
+  { id: '3', name: 'Fitness Challenge', brand: 'FitLife', creators: 12, status: 'completed', budget: '₹15,000' },
 ];
 
 const systemHealth = [
@@ -76,7 +76,7 @@ export default function AdminDashboardScreen({ navigate }: AdminDashboardScreenP
           <MetricCard
             title="Platform Revenue"
             value={platformStats.totalRevenue}
-            icon={DollarSign}
+ icon={IndianRupee}
             trend={{ value: '+18.2%', isPositive: true }}
             iconColor="bg-green-500"
           />
@@ -161,7 +161,7 @@ export default function AdminDashboardScreen({ navigate }: AdminDashboardScreenP
                     {[
                       { type: 'user', message: 'New creator signup: Sarah Miller', time: '5 min ago' },
                       { type: 'campaign', message: 'Campaign "Summer Launch" went live', time: '1 hour ago' },
-                      { type: 'payment', message: 'Payment processed: $1,200', time: '2 hours ago' },
+ { type: 'payment', message: 'Payment processed: ₹1,200', time: '2 hours ago' },
                       { type: 'user', message: 'Brand verified: TechBrand Inc', time: '3 hours ago' },
                     ].map((activity, i) => (
                       <div key={i} className="flex items-start gap-3 pb-4 border-b border-gray-100 last:border-0">
@@ -172,7 +172,7 @@ export default function AdminDashboardScreen({ navigate }: AdminDashboardScreenP
                         }`}>
                           {activity.type === 'user' && <Users className="w-4 h-4 text-purple-600" />}
                           {activity.type === 'campaign' && <Briefcase className="w-4 h-4 text-blue-600" />}
-                          {activity.type === 'payment' && <DollarSign className="w-4 h-4 text-green-600" />}
+ {activity.type === 'payment' && <IndianRupee className="w-4 h-4 text-green-600" />}
                         </div>
                         <div className="flex-1">
                           <p className="text-sm text-gray-900">{activity.message}</p>

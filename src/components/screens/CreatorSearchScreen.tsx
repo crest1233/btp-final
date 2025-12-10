@@ -127,7 +127,7 @@ export default function CreatorSearchScreen({ appState, navigate }: CreatorSearc
     engagement: c.avgEngagementRate != null ? `${c.avgEngagementRate}%` : (c.engagementRate || c.stats?.engagementRate || ''),
     avgViews: c.avgViews || c.stats?.avgViews || undefined,
     rating: c.rating || undefined,
-    rate: c.basePrice != null ? `$${c.basePrice}` : (c.rate || undefined),
+      rate: c.basePrice != null ? `₹${c.basePrice}` : (c.rate || undefined),
   });
 
   return (

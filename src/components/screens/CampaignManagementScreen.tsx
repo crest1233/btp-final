@@ -48,7 +48,7 @@ export default function CampaignManagementScreen({ navigate, appState }: Campaig
           startDate: c.startDate ? String(c.startDate).slice(0, 10) : '—',
           endDate: c.endDate ? String(c.endDate).slice(0, 10) : '—',
           creators: (c._count?.applications as any) || c.creators || 0,
-          budget: typeof c.budget === 'number' ? `$${Number(c.budget).toLocaleString()}` : (c.budget || '—'),
+            budget: typeof c.budget === 'number' ? `₹${Number(c.budget).toLocaleString()}` : (c.budget || '—'),
           reach: '—',
           engagement: '—',
         }));

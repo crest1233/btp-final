@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Slider } from '../ui/slider';
 import { Badge } from '../ui/badge';
-import { TrendingUp, DollarSign, Users, BarChart3, Info } from 'lucide-react';
+import { TrendingUp, IndianRupee, Users, BarChart3, Info } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -200,7 +200,7 @@ export default function PricePredictionScreen({ navigate }: PricePredictionScree
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-6 h-6 text-green-600" />
+                <IndianRupee className="w-6 h-6 text-green-600" />
                 Recommended Pricing
               </CardTitle>
             </CardHeader>
